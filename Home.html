@@ -17,20 +17,6 @@ body{
   overflow-x:hidden;
 }
 
-/* Floating hearts */
-.heart{
-  position:fixed;
-  bottom:-20px;
-  animation:floatUp 6s linear infinite;
-  font-size:20px;
-  pointer-events:none;
-}
-
-@keyframes floatUp{
-  0%{transform:translateY(0);opacity:1;}
-  100%{transform:translateY(-100vh);opacity:0;}
-}
-
 section{
   min-height:100vh;
   display:flex;
@@ -49,7 +35,6 @@ section{
   box-shadow:0 20px 40px rgba(0,0,0,0.2);
   width:100%;
   max-width:500px;
-  position:relative;
 }
 
 h1{font-family:'Great Vibes', cursive;font-size:clamp(2rem,5vw,3rem);}
@@ -84,7 +69,6 @@ textarea{
   border:none;
   resize:none;
   font-family:'Poppins';
-  font-size:0.95rem;
 }
 
 #finalView{
@@ -111,37 +95,13 @@ textarea{
   border-radius:20px;
   width:100%;
   max-width:400px;
-  max-height:90vh;
-  overflow-y:auto;
   text-align:center;
-}
-
-/* Final YES/NO Area */
-#finalArea{
-  position:relative;
-  height:220px;
-  width:100%;
-  overflow:hidden; /* IMPORTANT for mobile */
-}
-
-/* Initial placement */
-#finalYesBtn,
-#finalNoBtn{
-  position:absolute;
-  top:50%;
-  transform:translateY(-50%);
 }
 
 #noMessage{
   display:none;
-  margin-top:20px;
+  margin-top:15px;
   font-size:16px;
-}
-
-@media (max-width:480px){
-  .card{padding:25px 18px;}
-  button{width:100%;margin:10px 0;}
-  #finalArea{height:260px;}
 }
 </style>
 </head>
@@ -151,7 +111,7 @@ textarea{
 <section id="hero">
   <div class="card">
     <h1>Hey Shona My Love ❤️</h1>
-    <h3>Happy Valentine's day shona meri jaan ❤️</h3>
+    <h3>Happy Valentine's Day meri jaan ❤️</h3>
     <p>I made something special just for you…</p>
     <button class="primary-btn" onclick="startQuestions()">Start</button>
   </div>
@@ -174,13 +134,14 @@ textarea{
   </div>
 </section>
 
+<!-- FINAL SECTION (CLEAN VERSION) -->
 <section id="finalSection" style="display:none;">
   <div class="card">
     <h3>✨ Will You Be My Valentine? ✨</h3>
 
-    <div id="finalArea">
-      <button class="yes-btn" id="finalYesBtn" onclick="showLoveMessage()">💖 YES</button>
-      <button class="no-btn" id="finalNoBtn">💔 NO</button>
+    <div>
+      <button class="yes-btn" onclick="showLoveMessage()">💖 YES</button>
+      <button class="no-btn" onclick="showNoMessage()">💔 NO</button>
     </div>
 
     <div id="noMessage">😜 Nice try! Only YES works!</div>
@@ -205,21 +166,11 @@ textarea{
 
 <script>
 
-setInterval(()=>{
-  const heart=document.createElement("div");
-  heart.classList.add("heart");
-  heart.innerHTML="❤️";
-  heart.style.left=Math.random()*100+"vw";
-  heart.style.fontSize=Math.random()*20+10+"px";
-  document.body.appendChild(heart);
-  setTimeout(()=>heart.remove(),6000);
-},600);
-
 const questions=[
 "Will you let me be the reason behind your happiest smile?",
 "Will you walk beside me… not just today, but always?",
 "Will you be my peace when the world feels loud?",
-"Do you feel safe with me the way I feel with you?",
+"Do you feel safe with me the way I feel at home with you?",
 "When life gets messy, will you still choose me?"
 ];
 
@@ -235,6 +186,7 @@ function startQuestions(){
 
 function selectAnswer(answer){
   selectedAnswer=answer;
+
   const yesBtn=document.getElementById("yesBtn");
   const noBtn=document.getElementById("noBtn");
   const reasonBox=document.getElementById("reasonBox");
@@ -272,48 +224,14 @@ function goNext(){
   }else{
     document.getElementById("questionSection").style.display="none";
     document.getElementById("finalSection").style.display="flex";
-    activateFloatingNo();
   }
 }
 
-function activateFloatingNo(){
-  const noBtn=document.getElementById("finalNoBtn");
-  const yesBtn=document.getElementById("finalYesBtn");
-  const area=document.getElementById("finalArea");
+/* Final NO Click */
+function showNoMessage(){
   const message=document.getElementById("noMessage");
-
-  function setInitialPositions(){
-    const areaWidth=area.clientWidth;
-    const btnWidth=noBtn.offsetWidth;
-    yesBtn.style.left=(areaWidth/2 - btnWidth - 20)+"px";
-    noBtn.style.left=(areaWidth/2 + 20)+"px";
-  }
-
-  setInitialPositions();
-  window.addEventListener("resize",setInitialPositions);
-
-  function move(){
-    const maxX=area.clientWidth-noBtn.offsetWidth;
-    const maxY=area.clientHeight-noBtn.offsetHeight;
-    noBtn.style.left=Math.random()*maxX+"px";
-    noBtn.style.top=Math.random()*maxY+"px";
-  }
-
-  area.addEventListener("mousemove",(e)=>{
-    const rect=noBtn.getBoundingClientRect();
-    const dist=Math.hypot(
-      e.clientX-(rect.left+rect.width/2),
-      e.clientY-(rect.top+rect.height/2)
-    );
-    if(dist<90){move();}
-  });
-
-  noBtn.addEventListener("click",(e)=>{
-    e.preventDefault();
-    message.style.display="block";
-    setTimeout(()=>{message.style.display="none";},2000);
-    move();
-  });
+  message.style.display="block";
+  setTimeout(()=>{message.style.display="none";},2000);
 }
 
 function showLoveMessage(){
@@ -331,6 +249,7 @@ function sendTelegramMessage(){
   const finalView=document.getElementById("finalView").value;
 
   let summary="💖 Valentine Response Summary 💖\n\n";
+
   answers.forEach((item,index)=>{
     summary+=`Q${index+1}: ${item.question}\n`;
     summary+=`Answer: ${item.answer}\n`;
