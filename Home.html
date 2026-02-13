@@ -35,6 +35,19 @@ section{
   padding:20px;
 }
 
+.heart{
+  position:fixed;
+  bottom:-20px;
+  animation:floatUp 6s linear infinite;
+  font-size:20px;
+  pointer-events:none;
+}
+
+@keyframes floatUp{
+  0%{transform:translateY(0);opacity:1;}
+  100%{transform:translateY(-100vh);opacity:0;}
+}
+
 .card{
   background:rgba(255,255,255,0.15);
   backdrop-filter:blur(15px);
@@ -179,6 +192,24 @@ textarea{
 
 <script>
 
+/* Floating hearts background */
+setInterval(() => {
+  const heart = document.createElement("div");
+  heart.classList.add("heart");
+  heart.innerHTML = "❤️";
+
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.fontSize = (Math.random() * 15 + 15) + "px";
+  heart.style.opacity = Math.random();
+
+  document.body.appendChild(heart);
+
+  setTimeout(() => {
+    heart.remove();
+  }, 6000);
+
+}, 600);
+
 const questions=[
 "Will you let me be the reason behind your happiest smile?",
 "Will you walk beside me… not just today, but always?",
@@ -266,8 +297,8 @@ function openFeedbackModal(){
 
 function sendTelegramMessage(){
 
-  const botToken="YOUR_BOT_TOKEN";
-  const chatId="YOUR_CHAT_ID";
+  const botToken="8235910903:AAGiihRjYYxTpiOY1NHQwGoU720pcq_6NlY";
+  const chatId="810368272";
 
   const finalView=document.getElementById("finalView").value;
 
