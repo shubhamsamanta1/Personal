@@ -8,7 +8,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Great+Vibes&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
 
 body{
   font-family:'Poppins', sans-serif;
@@ -17,11 +21,13 @@ body{
   overflow-x:hidden;
 }
 
+/* Floating hearts */
 .heart{
   position:fixed;
   bottom:-20px;
   animation:floatUp 6s linear infinite;
   font-size:20px;
+  pointer-events:none;
 }
 
 @keyframes floatUp{
@@ -39,31 +45,42 @@ section{
   padding:20px;
 }
 
+/* Card */
 .card{
   background:rgba(255,255,255,0.15);
   backdrop-filter:blur(15px);
   padding:40px;
   border-radius:25px;
   box-shadow:0 20px 40px rgba(0,0,0,0.2);
-  max-width:500px;
   width:100%;
-  animation:fadeIn 1s ease forwards;
+  max-width:500px;
   position:relative;
 }
 
+/* Responsive headings */
 h1{
   font-family:'Great Vibes', cursive;
-  font-size:3rem;
+  font-size:clamp(2rem,5vw,3rem);
 }
 
+h2{
+  font-size:clamp(1.4rem,4vw,2rem);
+}
+
+h3{
+  font-size:clamp(1rem,3vw,1.2rem);
+}
+
+/* Buttons */
 button{
-  margin:15px;
+  margin:12px;
   padding:12px 28px;
   border:none;
   border-radius:30px;
   font-size:1rem;
   cursor:pointer;
   transition:0.3s;
+  min-width:120px;
 }
 
 .yes-btn{ background:#ff4d6d; color:white; }
@@ -71,10 +88,11 @@ button{
 .primary-btn{ background:#ff3366; color:white; }
 
 button:hover{
-  transform:scale(1.1);
+  transform:scale(1.08);
   box-shadow:0 10px 20px rgba(0,0,0,0.2);
 }
 
+/* Textarea */
 textarea{
   width:100%;
   margin-top:15px;
@@ -83,6 +101,7 @@ textarea{
   border:none;
   resize:none;
   font-family:'Poppins';
+  font-size:0.95rem;
 }
 
 #finalView{
@@ -91,15 +110,18 @@ textarea{
   color:#333;
 }
 
+/* Modal */
 .modal{
   position:fixed;
-  top:0;left:0;
+  top:0;
+  left:0;
   width:100%;
   height:100%;
   background:rgba(0,0,0,0.7);
   display:none;
   justify-content:center;
   align-items:center;
+  padding:20px;
 }
 
 .modal-content{
@@ -109,26 +131,48 @@ textarea{
   border-radius:20px;
   width:100%;
   max-width:400px;
+  max-height:90vh;
+  overflow-y:auto;
+  text-align:center;
 }
 
+/* Final YES/NO Area */
 #finalArea{
   position:relative;
-  height:150px;
+  height:220px;
+  width:100%;
 }
 
 #noMessage{
   display:none;
   margin-top:20px;
-  font-size:18px;
+  font-size:16px;
+}
+
+/* Mobile optimization */
+@media (max-width:480px){
+  .card{
+    padding:25px 18px;
+  }
+
+  button{
+    width:100%;
+    margin:10px 0;
+  }
+
+  #finalArea{
+    height:260px;
+  }
 }
 </style>
 </head>
+
 <body>
 
 <section id="hero">
   <div class="card">
     <h1>Hey Shona My Love ❤️</h1>
-	 <h3>Happy Valentine's day shona meri jaan ❤️</h3>
+    <h3>Happy Valentine's day shona meri jaan ❤️</h3>
     <p>I made something special just for you…</p>
     <button class="primary-btn" onclick="startQuestions()">Start</button>
   </div>
@@ -143,14 +187,9 @@ textarea{
       <button class="no-btn" id="noBtn" onclick="selectAnswer('No')">No 💔</button>
     </div>
 
-    <textarea id="reasonBox"
-      placeholder="Please tell me why 💌"
-      style="display:none;"></textarea>
+    <textarea id="reasonBox" placeholder="Please tell me why 💌" style="display:none;"></textarea>
 
-    <button class="primary-btn"
-      id="nextBtn"
-      onclick="goNext()"
-      style="display:none;">
+    <button class="primary-btn" id="nextBtn" onclick="goNext()" style="display:none;">
       Next ➡
     </button>
   </div>
@@ -158,7 +197,7 @@ textarea{
 
 <section id="finalSection" style="display:none;">
   <div class="card">
-    <h2>✨ Will You Be My Valentine? ✨</h2>
+    <h3>✨ Will You Be My Valentine? ✨</h3>
 
     <div id="finalArea">
       <button class="yes-btn"
@@ -198,6 +237,7 @@ textarea{
 
 <script>
 
+/* Floating hearts */
 setInterval(()=>{
   const heart=document.createElement("div");
   heart.classList.add("heart");
@@ -211,11 +251,9 @@ setInterval(()=>{
 const questions=[
 "Will you let me be the reason behind your happiest smile?",
 "Will you walk beside me… not just today, but always?",
-"Will you let me be the reason behind your happiest smile?",
 "Will you be my peace when the world feels loud?",
 "Do you feel safe with me the way I feel at home with you?",
 "When life gets messy, will you still choose me?"
-
 ];
 
 let current=0;
@@ -230,13 +268,19 @@ function startQuestions(){
 
 function selectAnswer(answer){
   selectedAnswer=answer;
+
   const yesBtn=document.getElementById("yesBtn");
   const noBtn=document.getElementById("noBtn");
   const reasonBox=document.getElementById("reasonBox");
   const nextBtn=document.getElementById("nextBtn");
 
-  if(answer==="Yes"){ noBtn.disabled=true; noBtn.style.opacity="0.5"; }
-  else{ yesBtn.disabled=true; yesBtn.style.opacity="0.5"; }
+  if(answer==="Yes"){
+    noBtn.disabled=true;
+    noBtn.style.opacity="0.5";
+  }else{
+    yesBtn.disabled=true;
+    yesBtn.style.opacity="0.5";
+  }
 
   reasonBox.style.display="block";
   nextBtn.style.display="inline-block";
@@ -244,7 +288,10 @@ function selectAnswer(answer){
 
 function goNext(){
   const reasonBox=document.getElementById("reasonBox");
-  if(reasonBox.value===""){ alert("Please tell me why 💌"); return; }
+  if(reasonBox.value===""){
+    alert("Please tell me why 💌");
+    return;
+  }
 
   answers.push({
     question:questions[current],
@@ -273,7 +320,6 @@ function goNext(){
 
 function activateFloatingNo(){
   const noBtn=document.getElementById("finalNoBtn");
-  const yesBtn=document.getElementById("finalYesBtn");
   const area=document.getElementById("finalArea");
   const message=document.getElementById("noMessage");
 
@@ -281,38 +327,8 @@ function activateFloatingNo(){
     const maxX=area.clientWidth-noBtn.offsetWidth;
     const maxY=area.clientHeight-noBtn.offsetHeight;
 
-    let newX,newY,safe=false;
-    while(!safe){
-      newX=Math.random()*maxX;
-      newY=Math.random()*maxY;
-
-      const yesRect=yesBtn.getBoundingClientRect();
-      const areaRect=area.getBoundingClientRect();
-
-      const noRect={
-        left:newX,
-        right:newX+noBtn.offsetWidth,
-        top:newY,
-        bottom:newY+noBtn.offsetHeight
-      };
-
-      const yesLocal={
-        left:yesRect.left-areaRect.left,
-        right:yesRect.right-areaRect.left,
-        top:yesRect.top-areaRect.top,
-        bottom:yesRect.bottom-areaRect.top
-      };
-
-      if(
-        noRect.right<yesLocal.left ||
-        noRect.left>yesLocal.right ||
-        noRect.bottom<yesLocal.top ||
-        noRect.top>yesLocal.bottom
-      ){ safe=true; }
-    }
-
-    noBtn.style.left=newX+"px";
-    noBtn.style.top=newY+"px";
+    noBtn.style.left=Math.random()*maxX+"px";
+    noBtn.style.top=Math.random()*maxY+"px";
   }
 
   area.addEventListener("mousemove",(e)=>{
@@ -370,8 +386,7 @@ function sendTelegramMessage(){
   })
   .then(res=>res.json())
   .then(data=>{
-	 if(data.ok){
-
+    if(data.ok){
 		// Optional: show a small success message on screen
 		const feedbackModal = document.getElementById("feedbackModal");
 		feedbackModal.innerHTML = `
@@ -391,5 +406,6 @@ function sendTelegramMessage(){
 }
 
 </script>
+
 </body>
 </html>
