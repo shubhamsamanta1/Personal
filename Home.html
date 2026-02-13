@@ -141,6 +141,18 @@ textarea{
   position:relative;
   height:220px;
   width:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:20px;
+}
+
+/* Remove inline positioning effect */
+#finalYesBtn,
+#finalNoBtn{
+  position:absolute;
+  top:40%;
+  transform:translateY(-45%);
 }
 
 #noMessage{
@@ -202,14 +214,12 @@ textarea{
     <div id="finalArea">
       <button class="yes-btn"
         id="finalYesBtn"
-        style="position:absolute; left:20%; top:50px;"
         onclick="showLoveMessage()">
         💖 YES
       </button>
 
       <button class="no-btn"
-        id="finalNoBtn"
-        style="position:absolute; left:50%; top:50px;">
+        id="finalNoBtn">
         💔 NO
       </button>
     </div>
@@ -220,7 +230,8 @@ textarea{
 
 <div class="modal" id="loveModal">
   <div class="modal-content">
-    <h2>You just made me the happiest person alive ❤️</h2>
+    <h3>You just made me the happiest person alive ❤️</h3>
+	<p>If you feel the same way, just tap below and reply to me ❤</p>
     <button class="primary-btn" onclick="openFeedbackModal()">
       I Love You Too 💌
     </button>
@@ -319,25 +330,44 @@ function goNext(){
 }
 
 function activateFloatingNo(){
-  const noBtn=document.getElementById("finalNoBtn");
-  const area=document.getElementById("finalArea");
-  const message=document.getElementById("noMessage");
+  const noBtn = document.getElementById("finalNoBtn");
+  const yesBtn = document.getElementById("finalYesBtn");
+  const area = document.getElementById("finalArea");
+  const message = document.getElementById("noMessage");
 
-  function move(){
-    const maxX=area.clientWidth-noBtn.offsetWidth;
-    const maxY=area.clientHeight-noBtn.offsetHeight;
+  // Initial positions (clean center alignment)
+  function setInitialPositions(){
+    const areaWidth = area.clientWidth;
+    const btnWidth = noBtn.offsetWidth;
 
-    noBtn.style.left=Math.random()*maxX+"px";
-    noBtn.style.top=Math.random()*maxY+"px";
+    yesBtn.style.left = (areaWidth / 2 - btnWidth - 15) + "px";
+    noBtn.style.left = (areaWidth / 2 + 15) + "px";
   }
 
-  area.addEventListener("mousemove",(e)=>{
-    const rect=noBtn.getBoundingClientRect();
-    const dist=Math.hypot(
-      e.clientX-(rect.left+rect.width/2),
-      e.clientY-(rect.top+rect.height/2)
+  setInitialPositions();
+  window.addEventListener("resize", setInitialPositions);
+
+  function move(){
+    const maxX = area.clientWidth - noBtn.offsetWidth;
+    const maxY = area.clientHeight - noBtn.offsetHeight;
+
+    const newX = Math.random() * maxX;
+    const newY = Math.random() * maxY;
+
+    noBtn.style.left = newX + "px";
+    noBtn.style.top = newY + "px";
+  }
+
+  area.addEventListener("mousemove", (e)=>{
+    const rect = noBtn.getBoundingClientRect();
+    const dist = Math.hypot(
+      e.clientX - (rect.left + rect.width/2),
+      e.clientY - (rect.top + rect.height/2)
     );
-    if(dist<100){ move(); }
+
+    if(dist < 90){
+      move();
+    }
   });
 
   noBtn.addEventListener("click",(e)=>{
