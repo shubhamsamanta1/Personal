@@ -95,7 +95,7 @@ textarea{
   border:none;
   resize:none;
   font-family:'Poppins';
-  font-size:16px; /* prevents iOS zoom */
+  font-size:16px;
 }
 
 #finalView{
@@ -197,23 +197,17 @@ textarea{
 
 <script>
 
-/* Floating hearts background */
-setInterval(() => {
-  const heart = document.createElement("div");
+/* Floating hearts */
+setInterval(()=>{
+  const heart=document.createElement("div");
   heart.classList.add("heart");
-  heart.innerHTML = "❤️";
-
-  heart.style.left = Math.random() * 100 + "vw";
-  heart.style.fontSize = (Math.random() * 15 + 15) + "px";
-  heart.style.opacity = Math.random();
-
+  heart.innerHTML="❤️";
+  heart.style.left=Math.random()*100+"vw";
+  heart.style.fontSize=(Math.random()*15+15)+"px";
+  heart.style.opacity=Math.random();
   document.body.appendChild(heart);
-
-  setTimeout(() => {
-    heart.remove();
-  }, 6000);
-
-}, 600);
+  setTimeout(()=>heart.remove(),6000);
+},600);
 
 const questions=[
 "Will you let me be the reason behind your happiest smile?",
@@ -225,36 +219,36 @@ const questions=[
 
 let current=0;
 let answers=[];
-let selectedAnswer="";
 
 function startQuestions(){
-  document.getElementById("hero").style.display="none";
-  document.getElementById("questionSection").style.display="flex";
-  document.getElementById("questionText").innerText=questions[current];
+  hero.style.display="none";
+  questionSection.style.display="flex";
+  questionText.innerText=questions[current];
 }
 
 function selectAnswer(answer){
-  selectedAnswer=answer;
 
-  const yesBtn=document.getElementById("yesBtn");
-  const noBtn=document.getElementById("noBtn");
-  const reasonBox=document.getElementById("reasonBox");
-  const nextBtn=document.getElementById("nextBtn");
+  yesBtn.disabled=true;
+  noBtn.disabled=true;
+  yesBtn.style.opacity="0.5";
+  noBtn.style.opacity="0.5";
 
   if(answer==="Yes"){
-    noBtn.disabled=true;
-    noBtn.style.opacity="0.5";
-  }else{
-    yesBtn.disabled=true;
-    yesBtn.style.opacity="0.5";
-  }
+    answers.push({
+      question:questions[current],
+      answer:"Yes",
+      reason:""
+    });
 
-  reasonBox.style.display="block";
-  nextBtn.style.display="inline-block";
+    setTimeout(()=>moveNext(),400);
+
+  }else{
+    reasonBox.style.display="block";
+    nextBtn.style.display="inline-block";
+  }
 }
 
 function goNext(){
-  const reasonBox=document.getElementById("reasonBox");
   if(reasonBox.value===""){
     alert("Please tell me why 💌");
     return;
@@ -262,13 +256,18 @@ function goNext(){
 
   answers.push({
     question:questions[current],
-    answer:selectedAnswer,
+    answer:"No",
     reason:reasonBox.value
   });
 
   reasonBox.value="";
   reasonBox.style.display="none";
   nextBtn.style.display="none";
+
+  moveNext();
+}
+
+function moveNext(){
 
   yesBtn.disabled=false;
   noBtn.disabled=false;
@@ -278,26 +277,25 @@ function goNext(){
   current++;
 
   if(current<questions.length){
-    document.getElementById("questionText").innerText=questions[current];
+    questionText.innerText=questions[current];
   }else{
-    document.getElementById("questionSection").style.display="none";
-    document.getElementById("finalSection").style.display="flex";
+    questionSection.style.display="none";
+    finalSection.style.display="flex";
   }
 }
 
 function showNoMessage(){
-  const message=document.getElementById("noMessage");
-  message.style.display="block";
-  setTimeout(()=>{message.style.display="none";},2000);
+  noMessage.style.display="block";
+  setTimeout(()=>noMessage.style.display="none",2000);
 }
 
 function showLoveMessage(){
-  document.getElementById("loveModal").style.display="flex";
+  loveModal.style.display="flex";
 }
 
 function openFeedbackModal(){
-  document.getElementById("loveModal").style.display="none";
-  document.getElementById("feedbackModal").style.display="flex";
+  loveModal.style.display="none";
+  feedbackModal.style.display="flex";
 }
 
 function sendTelegramMessage(){
@@ -312,7 +310,10 @@ function sendTelegramMessage(){
   answers.forEach((item,index)=>{
     summary+=`Q${index+1}: ${item.question}\n`;
     summary+=`Answer: ${item.answer}\n`;
-    summary+=`Reason: ${item.reason}\n\n`;
+    if(item.reason){
+      summary+=`Reason: ${item.reason}\n`;
+    }
+    summary+="\n";
   });
 
   summary+="She said YES to the proposal ❤️\n\n";
@@ -330,7 +331,7 @@ function sendTelegramMessage(){
   .then(res=>res.json())
   .then(data=>{
     if(data.ok){
-      document.getElementById("feedbackModal").innerHTML=`
+      feedbackModal.innerHTML=`
         <div class="modal-content">
           <h3>Message Sent Successfully 💖</h3>
           <p>Reloading...</p>
